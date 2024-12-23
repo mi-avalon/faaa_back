@@ -1,0 +1,65 @@
+[project]
+name = "faaa"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "diskcache>=5.6.3",
+    "fastapi[standard]>=0.115.6, < 1.0.0",
+    "openai>=1.57.4",
+    "orjson>=3.10.12, < 4.0.0",
+    "pydantic>=2.10.3, < 3.0.0",
+    "pydantic-settings>=2.7.0, < 3.0.0",
+    "python-dotenv>=1.0.1",
+    "requests>=2.32.3, < 3.0.0",
+]
+
+[dependency-groups]
+dev = [
+    "black>=24.10.0",
+    "httpx>=0.28.1, < 1.0.0",
+    "ipykernel>=6.29.5",
+    "pytest-asyncio>=0.25.0",
+    "pytest>=8.3.4, < 9.0.0",
+    "ruff>=0.8.3",
+    "uv>=0.5.9",
+    "nest-asyncio>=1.6.0",
+    "pyright>=1.1.390",
+    "mypy>=1.13.0",
+    "pytest-mock>=3.14.0",
+]
+
+# Build system configuration
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+# For code formatting and linting
+[tool.ruff]
+exclude = [".venv", "venv", "__pycache__", ".git"]
+line-length = 110
+indent-width = 4
+
+[tool.ruff.lint]
+# PEP8
+select = [
+    "F", # Pyflakes
+    "E", # pycodestyle
+    "W", # pycodestyle
+]
+ignore = [
+    "F841", # unused-variable
+    "E741", # ambiguous-variable-name
+    "W505", # doc-line-too-long
+]
+fixable = ["ALL"]
+
+[tool.ruff.format]
+quote-style = "double"
+skip-magic-trailing-comma = false
+
+
+[tool.ruff.lint.mccabe]
+# C901
+max-complexity = 10
