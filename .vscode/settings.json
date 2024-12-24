@@ -35,6 +35,7 @@
         "lock",
     ],
     "cSpell.words": [
+        "cpus",
         "faaa",
         "fastapi",
         "httpx",

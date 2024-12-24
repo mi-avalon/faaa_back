@@ -111,9 +111,8 @@ class FaaA:
         self._thread_executor = (
             ThreadPoolExecutor(max_workers=max_thread_workers) if max_thread_workers else ThreadPoolExecutor()
         )
-        self._process_executor = (
-            ProcessPoolExecutor(os.cpu_count() - 1) if os.cpu_count() >= 2 else ProcessPoolExecutor()
-        )
+        cpus = os.cpu_count() or 1
+        self._process_executor = ProcessPoolExecutor(cpus - 1) if cpus >= 2 else ProcessPoolExecutor()
 
     def include_agents(self, *agent: Agent, **kwargs):
         """
@@ -162,8 +161,8 @@ class FaaA:
             return DynamicPlanTracer(
                 id=id,
                 description="No agents available",
-                steps=None,
-                recommendation_tools=None,
+                steps=[],
+                recommendation_tools=[],
                 recommendation_score=0.0,
             )
 
