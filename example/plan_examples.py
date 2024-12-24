@@ -1,11 +1,11 @@
-"""Examples of using FaaA's generate_plan functionality.
+"""使用FaaA的generate_plan功能的示例。
 
-Before running this example:
-1. Create a .env file in the project root with:
+运行此示例前需要：
+1. 在项目根目录创建.env文件，包含：
    OPENAI_API_KEY="your-api-key"
    OPENAI_BASE_URL="https://openrouter.ai/api/v1"
 
-2. Replace "your-api-key" with your actual OpenAI API key
+2. 将"your-api-key"替换为你的实际OpenAI API密钥
 """
 
 import asyncio
@@ -17,119 +17,119 @@ from faaa.decorator.agent import Agent
 
 
 async def main():
-    # Create and configure agents
+    # 创建并配置agents
     agent = Agent()
 
     agent.register(use_process=False)(calculate_fibonacci)
     agent.register(use_process=True)(prime_factors)
     agent.register()(fetch_delayed_greeting)
 
-    # Initialize FaaA
+    # 初始化FaaA
     async with FaaA() as fa:
-        # Include our agent
+        # 包含我们的agent
         fa.include_agents(agent)
-        # Register all tools
+        # 注册所有工具
         await fa.register_agents()
 
-        print("Simple Example: Calculate Fibonacci")
-        # Simple query using one tool
-        simple_plans = await fa.generate_plan("I need to calculate the 10th number in the Fibonacci sequence")
+        print("简单示例：计算斐波那契数列")
+        # 使用单个工具的简单查询
+        simple_plans = await fa.generate_plan("我需要计算斐波那契数列中的第10个数字，请告诉我具体步骤。")
         for simple_plan in simple_plans:
-            print(f"\nPlan ID: {simple_plan.id}")
-            print(f"Description: {simple_plan.description}")
-            print(f"Recommendation score: {simple_plan.recommendation_score}")
-            print("\nSteps:")
+            print(f"\n计划ID: {simple_plan.id}")
+            print(f"描述: {simple_plan.description}")
+            print(f"推荐分数: {simple_plan.recommendation_score}")
+            print("\n步骤:")
             for i, step in enumerate(simple_plan.steps or [], 1):
-                print(f"\nStep {i}:")
-                print(f"Description: {step.description}")
-                print(f"Tool: {step.suggested_tool}")
-                print(f"Query: {step.sub_query}")
-                print(f"Explanation: {step.explanation}")
+                print(f"\n步骤 {i}:")
+                print(f"描述: {step.description}")
+                print(f"工具: {step.suggested_tool}")
+                print(f"查询: {step.sub_query}")
+                print(f"解释: {step.explanation}")
 
             print("\n" + "=" * 50 + "\n")
 
-        print("Example with Retry: Delayed Greetings")
-        # Example showing retry for potentially failing operations
+        print("带重试的示例：延迟问候")
+        # 展示可能失败操作的重试示例
         retry_plans = await fa.generate_plan("""
-        Send a delayed greeting to Alice with a 2 second delay. 
-        Since network operations might fail, we should retry if needed.
+        我需要向小明发送一个延迟2秒的问候。
+        由于网络操作可能会失败，如果失败的话应该重试。
         """)
 
         for retry_plan in retry_plans:
-            print(f"\nPlan ID: {retry_plan.id}")
-            print(f"Description: {retry_plan.description}")
-            print(f"Recommendation score: {simple_plan.recommendation_score}")
-            print("\nSteps:")
+            print(f"\n计划ID: {retry_plan.id}")
+            print(f"描述: {retry_plan.description}")
+            print(f"推荐分数: {retry_plan.recommendation_score}")
+            print("\n步骤:")
             for i, step in enumerate(retry_plan.steps or [], 1):
-                print(f"\nStep {i}:")
-                print(f"Description: {step.description}")
-                print(f"Tool: {step.suggested_tool}")
-                print(f"Query: {step.sub_query}")
-                print(f"Explanation: {step.explanation}")
-                print(f"Retry: {step.retry}")
+                print(f"\n步骤 {i}:")
+                print(f"描述: {step.description}")
+                print(f"工具: {step.suggested_tool}")
+                print(f"查询: {step.sub_query}")
+                print(f"解释: {step.explanation}")
+                print(f"重试次数: {step.retry}")
 
             print("\n" + "=" * 50 + "\n")
 
-        print("Example with Insufficient Tools")
-        # Example showing tool recommendations when tools are insufficient
+        print("工具不足的示例")
+        # 展示当工具不足时的工具推荐示例
         insufficient_plan = (
             await fa.generate_plan("""
-        I need to:
-        1. Calculate the square root of 16
-        2. Round the result to 2 decimal places
+        我需要完成以下计算：
+        1. 计算25的平方根
+        2. 将结果四舍五入到小数点后3位
         """)
         )[0]
 
-        print(f"\nPlan ID: {insufficient_plan.id}")
-        print(f"Description: {insufficient_plan.description}")
-        print(f"Recommendation score: {insufficient_plan.recommendation_score}")
+        print(f"\n计划ID: {insufficient_plan.id}")
+        print(f"描述: {insufficient_plan.description}")
+        print(f"推荐分数: {insufficient_plan.recommendation_score}")
 
         if insufficient_plan.recommendation_tools:
-            print("\nRecommended Tools Needed:")
+            print("\n需要的推荐工具:")
             for tool in insufficient_plan.recommendation_tools:
-                print(f"\nTool: {tool.name}")
-                print(f"Description: {tool.description}")
-                print(f"Why: {tool.reason}")
-                print("Parameters:")
+                print(f"\n工具: {tool.name}")
+                print(f"描述: {tool.description}")
+                print(f"原因: {tool.reason}")
+                print("参数:")
                 for param in tool.parameters:
-                    print(f"- {param.name}: {param.type} ({'required' if param.required else 'optional'})")
-                    print(f"  Description: {param.description}")
+                    print(f"- {param.name}: {param.type} ({'必需' if param.required else '可选'})")
+                    print(f"  描述: {param.description}")
         else:
-            print("Should no recommendations available but:")
-            print("\nSteps:")
+            print("应该没有可用步骤，但是:")
+            print("\n步骤:")
             for i, step in enumerate(insufficient_plan.steps or [], 1):
-                print(f"\nStep {i}:")
-                print(f"Description: {step.description}")
-                print(f"Tool: {step.suggested_tool}")
-                print(f"Query: {step.sub_query}")
-                print(f"Explanation: {step.explanation}")
-                print(f"Retry: {step.retry}")
+                print(f"\n步骤 {i}:")
+                print(f"描述: {step.description}")
+                print(f"工具: {step.suggested_tool}")
+                print(f"查询: {step.sub_query}")
+                print(f"解释: {step.explanation}")
+                print(f"重试次数: {step.retry}")
 
         print("\n" + "=" * 50 + "\n")
 
-        print("Complex Example: Mathematical Analysis")
-        # Complex query combining multiple tools
+        print("复杂示例：数学分析")
+        # 组合多个工具的复杂查询
         complex_plans = await fa.generate_plan("""
-        I need to perform the following mathematical analysis:
-        1. Calculate the 15th Fibonacci number
-        2. Find its prime factors
-        3. For each prime factor, get a delayed greeting with that number as the delay
+        我需要进行以下数学分析：
+        1. 计算斐波那契数列的第15个数字
+        2. 找出这个数字的所有质因数
+        3. 对每个质因数，发送一个以该数字作为延迟秒数的问候消息
         """)
 
         for complex_plan in complex_plans:
-            print(f"\nPlan ID: {complex_plan.id}")
-            print(f"Description: {complex_plan.description}")
-            print(f"Recommendation score: {complex_plan.recommendation_score}")
-            print("\nSteps:")
+            print(f"\n计划ID: {complex_plan.id}")
+            print(f"描述: {complex_plan.description}")
+            print(f"推荐分数: {complex_plan.recommendation_score}")
+            print("\n步骤:")
             for i, step in enumerate(complex_plan.steps or [], 1):
-                print(f"\nStep {i}:")
-                print(f"Description: {step.description}")
-                print(f"Tool: {step.suggested_tool}")
-                print(f"Query: {step.sub_query}")
-                print(f"Explanation: {step.explanation}")
+                print(f"\n步骤 {i}:")
+                print(f"描述: {step.description}")
+                print(f"工具: {step.suggested_tool}")
+                print(f"查询: {step.sub_query}")
+                print(f"解释: {step.explanation}")
 
             if complex_plan.recommendation_tools:
-                print("\nRecommended Tools:")
+                print("\n推荐工具:")
                 for tool in complex_plan.recommendation_tools:
                     print(f"- {tool.name}: {tool.description}")
 

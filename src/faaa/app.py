@@ -11,7 +11,7 @@ from pydantic import BaseModel
 from faaa.core.llm import LLMClient
 from faaa.core.tool_schema import ToolParameter
 from faaa.decorator.agent import Agent, _AgentToolSchema
-from faaa.prompt import DYNAMIC_PLAN_INSTRUCTION
+from faaa.prompt.prompt import DYNAMIC_PLAN_INSTRUCTION
 from faaa.util import generate_id, pydantic_to_yaml
 
 
@@ -176,8 +176,9 @@ class FaaA:
             query,
             structured_outputs=DynamicPlanContainer,
             max_try=1,
-            max_tokens=10000,
-            model="anthropic/claude-3.5-haiku",
+            max_tokens=1000,
+            model="openai/gpt-4o-2024-11-20",
+            # model="openai/gpt-4o-mini",
         )
 
         return [
