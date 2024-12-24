@@ -11,7 +11,7 @@ from pydantic import BaseModel
 from faaa.core.llm import LLMClient
 from faaa.core.tool_schema import ToolParameter
 from faaa.decorator.agent import Agent, _AgentToolSchema
-from faaa.prompt.prompt import DYNAMIC_PLAN_INSTRUCTION
+from faaa.prompt import DYNAMIC_PLAN_INSTRUCTION
 from faaa.util import generate_id, pydantic_to_yaml
 
 
