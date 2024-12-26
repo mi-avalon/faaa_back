@@ -29,11 +29,11 @@ async def main():
         # 包含我们的agent
         fa.include_agents(agent)
         # 注册所有工具
-        await fa.register_agents()
+        _ = await fa.register_agents()
 
         print("简单示例：计算斐波那契数列")
         # 使用单个工具的简单查询
-        simple_plans = await fa.generate_plan("我需要计算斐波那契数列中的第10个数字，请告诉我具体步骤。")
+        simple_plans = await fa.generate_plan("我需要计算斐波那契数列中的第10个数字。")
         for simple_plan in simple_plans:
             print(f"\n计划ID: {simple_plan.id}")
             print(f"描述: {simple_plan.description}")
