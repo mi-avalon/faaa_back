@@ -8,6 +8,7 @@ from openai.types.chat import ChatCompletionMessage, ChatCompletionMessageParam
 from pydantic import BaseModel
 
 from faaa.core.tool import ToolSchema
+from faaa.core.tool.schema import ToolMetaSchema
 
 # Define generic variable, restricted to BaseModel subclasses
 T = TypeVar("T", bound=BaseModel)
@@ -133,7 +134,7 @@ class BaseLLMClient(ABC):
         pass
 
     @abstractmethod
-    async def tool_description(self, func: Callable) -> ToolSchema:
+    async def tool_description(self, func: Callable) -> ToolMetaSchema:
         """
         Asynchronously retrieves the tool description.
 

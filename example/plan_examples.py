@@ -8,11 +8,12 @@
 2. 将"your-api-key"替换为你的实际OpenAI API密钥
 """
 
-from agent_functions import calculate_fibonacci, fetch_delayed_greeting, prime_factors
 from fastapi import FastAPI
 
 from faaa import Agent
 from faaa.core import Tool
+
+from .agent_functions import calculate_fibonacci, fetch_delayed_greeting, prime_factors
 
 # 用户自定义的 FastAPI 实例
 app = FastAPI(
@@ -40,7 +41,19 @@ tool.add()(fetch_delayed_greeting)
 agent = Agent(fast_api=app, config={"key": "value"})
 agent.include_tools(tool)
 
-# 初始化FaaA
-# async with agent.run() as a:
-#     plan = await a.generate_plan("我需要计算斐波那契数列中的第10个数字。")
-#     a.logger.info(plan)
+
+# # 初始化FaaA
+# async def main():
+#     async with agent.run() as a:
+#         plan = await a.generate_plan("我需要计算斐波那契数列中的第10个数字。")
+#         a.logger.info(plan)
+
+
+# if __name__ == "__main__":
+#     #     #     import asyncio
+
+#     #     #     asyncio.run(main())
+#     # import uvicorn
+
+#     # uvicorn.run(app, host="0.0.0.0", port=8000)
+#     pass

@@ -117,7 +117,6 @@ class Agent:
         启动 Agent，初始化 AgentCore 并注册代理。
         """
         self.logger.info("Starting up Agent...")
-
         await self._init_agents()
         self.logger.info("Agent is ready.")
 
@@ -137,29 +136,29 @@ class Agent:
         self.logger.info(f"Received generate_plan request with data: {input_data.dict()}")
         try:
             result = await self.generate_plan(input_data.task)
-            return GeneratePlanResponse(status=200, plan=result)
+            if result:
+                return GeneratePlanResponse(status=200, plan=result)
+            else:
+                return GeneratePlanResponse(status=400, plan=[])
         except Exception as e:
             self.logger.error(f"Error in generate_plan: {e}")
             raise e
 
-    async def generate_plan(self, query: str) -> list[DynamicPlanTracer]:
+    async def generate_plan(self, query: str) -> list[DynamicPlanTracer] | None:
         if not self._tools:
             id = generate_id("No agents available")
-            return DynamicPlanTracer(
-                id=id,
-                description="No agents available",
-                steps=[],
-                recommendation_tools=[],
-                recommendation_score=0.0,
-            )
+            return None
 
         query = f"""
 <Query>\n{query}\n</Query>
 {'\n'.join(['<Tool>\n'+pydantic_to_yaml(s.tool)+'</Tool>' for s in self._tools.values()])}
 """.strip()
-        query = [{"role": "system", "content": DYNAMIC_PLAN_INSTRUCTION}, {"role": "user", "content": query}]
+        messages = [
+            {"role": "system", "content": DYNAMIC_PLAN_INSTRUCTION},
+            {"role": "user", "content": query},
+        ]
         DPs = await self._llm_client.structured_output(
-            query,
+            messages,
             structured_outputs=DynamicPlanContainer,
             max_try=1,
             max_tokens=1000,

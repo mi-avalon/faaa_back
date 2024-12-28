@@ -83,7 +83,7 @@ class OpenAIClient(BaseLLMClient):
         max_try: int | None = None,
     ) -> T:
         attempt = 0
-        last_error = None
+        last_error: BaseException | None = None
 
         if max_try is None:
             max_try = self._max_try
@@ -130,7 +130,10 @@ class OpenAIClient(BaseLLMClient):
                 # Exponential backoff between retries
                 await asyncio.sleep(1**attempt)
 
-        raise last_error
+        if last_error is not None:
+            raise last_error
+        else:
+            raise ValueError("An unknown error occurred")
 
     async def function_call(
         self,

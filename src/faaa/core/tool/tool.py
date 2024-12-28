@@ -30,7 +30,10 @@ class Tool:
     async def _init_tools(self) -> dict[str, ToolSchema] | None:
         if not self._registration_tasks:
             return None
-        self._tools = {t.code_id: t for t in await asyncio.gather(*self._registration_tasks) if t is not None}
+
+        # Execute registration tasks concurrently
+        _ = await asyncio.gather(*self._registration_tasks)
+        self._tools = {t.code_id: t for t in _ if t is not None}
 
         self._registration_tasks.clear()  # Clear tasks after execution
         return self._tools
@@ -83,7 +86,7 @@ class Tool:
 
         # Skip if already registered
         if code_id in self._tools:
-            return
+            return None
 
         # Generate tool schema in thread pool (I/O-bound)
         if self._thread_pool_executor is None:
