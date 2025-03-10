@@ -8,12 +8,13 @@
 2. 将"your-api-key"替换为你的实际OpenAI API密钥
 """
 
+from numbers import Number
+
+from agent_functions import calculate_fibonacci, fetch_delayed_greeting, prime_factors
 from fastapi import FastAPI
 
 from faaa import Agent
 from faaa.core import Tool
-
-from .agent_functions import calculate_fibonacci, fetch_delayed_greeting, prime_factors
 
 # 用户自定义的 FastAPI 实例
 app = FastAPI(
@@ -24,9 +25,9 @@ app = FastAPI(
 
 
 # 用户可以在这里添加额外的路由、依赖、中间件等
-@app.get("/custom_route")
-async def custom_route():
-    return {"message": "这是一个用户自定义的路由！"}
+# @app.get("/custom_route")
+# async def custom_route():
+#     return {"message": "这是一个用户自定义的路由！"}
 
 
 # 创建并配置agents
@@ -37,23 +38,38 @@ tool.add(use_process=True)(prime_factors)
 tool.add()(fetch_delayed_greeting)
 
 
+@tool.add()
+def sum(a: Number, b: Number) -> Number:
+    """
+    Calculate the sum of two numbers.
+
+    Args:
+        a (Number): The first number.
+        b (Number): The second number.
+
+    Returns:
+        Number: The sum of the two numbers.
+    """
+    return a + b
+
+
 # 初始化 Agent，并将 FastAPI 实例传递给它
 agent = Agent(fast_api=app, config={"key": "value"})
 agent.include_tools(tool)
 
 
-# # 初始化FaaA
+# 初始化FaaA
 # async def main():
 #     async with agent.run() as a:
 #         plan = await a.generate_plan("我需要计算斐波那契数列中的第10个数字。")
 #         a.logger.info(plan)
 
 
-# if __name__ == "__main__":
-#     #     #     import asyncio
+if __name__ == "__main__":
+    # import asyncio
 
-#     #     #     asyncio.run(main())
-#     # import uvicorn
+    # asyncio.run(main())
+    import uvicorn
 
-#     # uvicorn.run(app, host="0.0.0.0", port=8000)
-#     pass
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+    pass
