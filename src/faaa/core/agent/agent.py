@@ -19,7 +19,6 @@ from faaa.core.tool import Tool, ToolSchema
 from faaa.provider import OpenAIClient
 from faaa.util import generate_id, pydantic_to_yaml
 
-
 class GeneratePlanRequest(BaseModel):
     task: str
 
@@ -48,7 +47,7 @@ class Agent:
 
         # 设置日志
         self.logger = logger
-
+        self.logger.add("app.log")
         if self.fast_api:
             self._integrate_with_fastapi()
 
@@ -135,10 +134,13 @@ class Agent:
         """
         self.logger.info(f"Received generate_plan request with data: {input_data.dict()}")
         try:
+            self.logger.info("try to generate plan")
             result = await self.generate_plan(input_data.task)
             if result:
+                self.logger.info(f"Result of generate_plan: {result}")
                 return GeneratePlanResponse(status=200, plan=result)
             else:
+                self.logger.info(f"Result of generate_plan: no plan")
                 return GeneratePlanResponse(status=400, plan=[])
         except Exception as e:
             self.logger.error(f"Error in generate_plan: {e}")
