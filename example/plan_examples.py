@@ -12,7 +12,7 @@ from numbers import Number
 
 from agent_functions import calculate_fibonacci, fetch_delayed_greeting, prime_factors
 from fastapi import FastAPI
-
+from fastapi.middleware.cors import CORSMiddleware
 from faaa import Agent
 from faaa.core import Tool
 
@@ -21,6 +21,19 @@ app = FastAPI(
     title="Custom Agent API",
     description="这是一个自定义的 FastAPI 应用，集成了 Agent 功能。",
     version="1.0.0",
+)
+origins = [
+    "http://localhost:5173",
+    "http://localhost",
+    "http://localhost:8080",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
