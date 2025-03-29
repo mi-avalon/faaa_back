@@ -4,6 +4,7 @@
 # agent_package/agent.py
 
 import os
+import datetime
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from contextlib import asynccontextmanager
 from typing import Dict, Optional
@@ -47,7 +48,7 @@ class Agent:
 
         # 设置日志
         self.logger = logger
-        self.logger.add("app.log")
+        self.logger.add("logs/"+str(datetime.datetime.now())+".log")
         if self.fast_api:
             self._integrate_with_fastapi()
 

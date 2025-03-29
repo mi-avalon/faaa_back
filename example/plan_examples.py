@@ -65,10 +65,68 @@ def sum(a: Number, b: Number) -> Number:
     """
     return a + b
 
+@tool.add()
+def function_Sample():
+    """
+    This function do nothing.
+    """
+
+@tool.add()
+def landslide_image_extraction(full_image):
+    """
+    Extract the landslide part from an image.
+
+    Args:
+        full_image: The original full image.
+
+    Returns:
+        sub_image: the landslide part from full_image
+    """
+    return full_image[1]
+
+@tool.add()
+def reference_serching(query):
+    """
+    In response to a query, relevant reference files are identified, broken down into segments, and the segment demonstrating the highest correlation is returned.
+
+    Args:
+        query: the query.
+
+    Returns:
+        reference: reference information to the query.
+    """
+    return query[0]
+
+@tool.add()
+def landslide_type_identifier(landslide_image):
+    """
+    This function can tell which type of the soil is in a given image of landslide.
+
+    Args:
+        landslide_image: The image of landslide.
+
+    Returns:
+        the name of an soil
+    """
+    return "a cool name of soil"
+
+@tool.add()
+def call_search_engine(key_word):
+    """
+    This function search the key word by Google search engine, return the first web page of the result.
+
+    Args:
+        key_word: The key word to be searched.
+
+    Returns:
+        link of a web page.
+    """
+    return "www.sample."
 
 # 初始化 Agent，并将 FastAPI 实例传递给它
 agent = Agent(fast_api=app, config={"key": "value"})
 agent.include_tools(tool)
+
 
 
 # 初始化FaaA
