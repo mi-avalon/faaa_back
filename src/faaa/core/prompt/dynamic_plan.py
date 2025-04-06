@@ -21,7 +21,11 @@ signature: translate_text(text: str, source_language: str, target_language: str)
 description: Translates text from one language to another
 </Tool>
 … and so on.
-
+3. A chat record between user and you, denoted as:
+<record>
+user: Hello.
+agent: Hello.
+</record>
 Chain-of-Thought Reasoning:
 Before producing the final output, you should reason step-by-step internally (without revealing this reasoning to the user).
 Consider the user's request, the available tools, and how best to achieve the goal. Think through potential solutions, determine feasibility, and then select or propose one or more DPs accordingly. Only after completing this reasoning process (CoT) internally should you provide the final answer.

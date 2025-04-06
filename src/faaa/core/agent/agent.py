@@ -22,6 +22,7 @@ from faaa.util import generate_id, pydantic_to_yaml
 
 class GeneratePlanRequest(BaseModel):
     task: str
+    record: str
 
 
 class GeneratePlanResponse(BaseModel):
@@ -136,7 +137,7 @@ class Agent:
         self.logger.info(f"Received generate_plan request with data: {input_data.dict()}")
         try:
             self.logger.info("try to generate plan")
-            result = await self.generate_plan(input_data.task)
+            result = await self.generate_plan(input_data.task, input_data.record)
             if result:
                 self.logger.info(f"Result of generate_plan: {result}")
                 return GeneratePlanResponse(status=200, plan=result)
@@ -147,7 +148,7 @@ class Agent:
             self.logger.error(f"Error in generate_plan: {e}")
             raise e
 
-    async def generate_plan(self, query: str) -> list[DynamicPlanTracer] | None:
+    async def generate_plan(self, query: str, record: str) -> list[DynamicPlanTracer] | None:
         if not self._tools:
             id = generate_id("No agents available")
             return None
@@ -155,6 +156,7 @@ class Agent:
         query = f"""
 <Query>\n{query}\n</Query>
 {'\n'.join(['<Tool>\n'+pydantic_to_yaml(s.tool)+'</Tool>' for s in self._tools.values()])}
+<record>\n{record}\n</record>
 """.strip()
         messages = [
             {"role": "system", "content": DYNAMIC_PLAN_INSTRUCTION},
