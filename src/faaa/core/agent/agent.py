@@ -167,7 +167,8 @@ class Agent:
             structured_outputs=DynamicPlanContainer,
             max_try=1,
             max_tokens=1000,
-            model="openai/gpt-4o-2024-11-20",
+            # model="openai/gpt-4o-2024-11-20",
+            model="openai/gpt-4o-mini",
             # model="openai/o1-preview",
         )
 

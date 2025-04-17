@@ -33,6 +33,7 @@ Consider the user's request, the available tools, and how best to achieve the go
 {MULTI_LANGUAGE_INSTRUCTION}
 
 Your Responsibilities:
+* Based on chat record, update user's requested task, clarify and refine user goal.
 * Determine whether the given tools can achieve the user's goal.
 * If possible, produce one or more DPs that detail how to accomplish the task using the available tools.
 * If multiple solutions are possible, present multiple DPs, but follow this rule:
@@ -41,7 +42,7 @@ Your Responsibilities:
 
 DynamicPlan Requirements:
 * DynamicPlan:
-  - description: A description of the overall plan.
+  - description: A description of the overall plan, based on user's requested task, refined by chat record.
   - steps: A list of PlanStep or None.
   - recommendation_tool: A list of RecommendedTool or None.
   - recommendation_score: A float between 0 and 1.
